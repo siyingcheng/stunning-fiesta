@@ -1,5 +1,8 @@
 server:
   port: 8080
+  error:
+    include-message: always
+    include-stacktrace: never
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/spring_db

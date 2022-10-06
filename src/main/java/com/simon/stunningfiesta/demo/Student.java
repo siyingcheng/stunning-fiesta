@@ -1,11 +1,16 @@
 package com.simon.stunningfiesta.demo;
 
-import lombok.Getter;
-import lombok.Setter;
-
-import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.Period;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import lombok.Getter;
+import lombok.Setter;
 
 @Table
 @Entity
@@ -29,10 +34,6 @@ public class Student {
     @Transient
     private Integer age;
 
-    public Integer getAge() {
-        return Period.between(this.dob, LocalDate.now()).getYears();
-    }
-
     public Student() {
     }
 
@@ -47,6 +48,10 @@ public class Student {
         this.name = name;
         this.email = email;
         this.dob = dob;
+    }
+
+    public Integer getAge() {
+        return Period.between(this.dob, LocalDate.now()).getYears();
     }
 
     @Override
