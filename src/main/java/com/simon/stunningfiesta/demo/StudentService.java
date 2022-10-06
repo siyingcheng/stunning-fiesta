@@ -29,4 +29,12 @@ public class StudentService {
     public Optional<Student> findByEmail(String email) {
         return studentRepository.findByEmail(email);
     }
+
+    public void deleteById(Long id) {
+        if (!studentRepository.existsById(id)) {
+            throw new IllegalStateException(
+                    "the student with id " + id + " does not exists");
+        }
+        studentRepository.deleteById(id);
+    }
 }
