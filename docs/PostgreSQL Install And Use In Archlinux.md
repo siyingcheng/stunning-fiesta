@@ -71,10 +71,18 @@ Some useful command:
    psql spring_db
    ```
 3. List all databases: `\l`
+
    ![](images/a7c69e0d.png)
+
 4. Connect the specification database: `\c {database_name}`
+
    ![](images/f5330773.png)
+
 5. List tables, views, and sequences: `\d`
+
    ![](images/c8c2c4f4.png)
+
 6. Describe table, view, sequence, or index: `\d {NAME}`
+
    ![](images/a9b75647.png)
+
