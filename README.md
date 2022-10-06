@@ -1,5 +1,7 @@
 # stunning-fiesta
 
+[TOC]
+
 An Application based on Spring-Boot
 
 ## Configuration
