@@ -56,7 +56,10 @@ public class SecurityConfig implements WebMvcConfigurer {
     public DefaultSecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-                .authorizeRequests().antMatchers("/api/login").permitAll()
+                .authorizeRequests().antMatchers(
+                        "/api/login",
+                        "/api/*/refresh_token"
+                ).permitAll()
                 .antMatchers(GET, "/api/*/user").hasAnyAuthority(RoleEnum.MANAGER.getName(), RoleEnum.ADMIN.getName())
                 .antMatchers(GET, "/api/*/users").hasAnyAuthority(RoleEnum.MANAGER.getName(), RoleEnum.ADMIN.getName())
                 .antMatchers(POST, "/api/*/save/**").hasAnyAuthority(RoleEnum.MANAGER.getName(), RoleEnum.ADMIN.getName())
