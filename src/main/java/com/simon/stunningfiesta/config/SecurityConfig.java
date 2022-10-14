@@ -7,6 +7,8 @@ import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 import com.simon.stunningfiesta.filter.CustomAuthenticationFilter;
+import com.simon.stunningfiesta.filter.CustomAuthorizationFilter;
+import com.simon.stunningfiesta.model.RoleEnum;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +30,7 @@ import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.oauth2.server.resource.web.BearerTokenAuthenticationEntryPoint;
 import org.springframework.security.oauth2.server.resource.web.access.BearerTokenAccessDeniedHandler;
 import org.springframework.security.web.DefaultSecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 
@@ -54,8 +57,10 @@ public class SecurityConfig implements WebMvcConfigurer {
         http.csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeRequests().antMatchers("/api/login").permitAll()
-                .antMatchers(GET, "/api/*/user").hasAnyAuthority("ROLE_USER")
-                .antMatchers(POST, "/api/*/save/**").hasAnyAuthority("ROLE_ADMIN")
+                .antMatchers(GET, "/api/*/user").hasAnyAuthority(RoleEnum.MANAGER.getName(), RoleEnum.ADMIN.getName())
+                .antMatchers(GET, "/api/*/users").hasAnyAuthority(RoleEnum.MANAGER.getName(), RoleEnum.ADMIN.getName())
+                .antMatchers(POST, "/api/*/save/**").hasAnyAuthority(RoleEnum.MANAGER.getName(), RoleEnum.ADMIN.getName())
+                .anyRequest().authenticated()
                 .and().httpBasic(Customizer.withDefaults())
                 .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
                 .exceptionHandling().authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
@@ -65,6 +70,7 @@ public class SecurityConfig implements WebMvcConfigurer {
                 new CustomAuthenticationFilter(authenticationManager(authenticationConfiguration()));
         customAuthenticationFilter.setFilterProcessesUrl("/api/login");
         http.addFilter(customAuthenticationFilter);
+        http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 
