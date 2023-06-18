@@ -4,6 +4,7 @@ package com.simon.stunningfiesta.system.exception;
 import com.simon.stunningfiesta.artifact.ArtifactNotFoundException;
 import com.simon.stunningfiesta.system.Result;
 import com.simon.stunningfiesta.system.StatusCode;
+import com.simon.stunningfiesta.wizard.WizardNotFound;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
@@ -21,6 +22,14 @@ public class ExceptionHandleAdvice {
     @ExceptionHandler(ArtifactNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     Result handleArtifactNotFoundException(ArtifactNotFoundException ex) {
+        return Result.of(false)
+                .withCode(StatusCode.NOT_FOUND)
+                .withMessage(ex.getMessage());
+    }
+
+    @ExceptionHandler(WizardNotFound.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    Result handleWizardNotFoundException(WizardNotFound ex) {
         return Result.of(false)
                 .withCode(StatusCode.NOT_FOUND)
                 .withMessage(ex.getMessage());
