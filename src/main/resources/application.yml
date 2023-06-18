@@ -1,27 +1,6 @@
-server:
-  port: 8080
-  error:
-    include-message: always
-    include-stacktrace: never
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/spring_db
-    username: postgres
-    password: postgres
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:stunning-fiesta
   jpa:
-    hibernate:
-      ddl-auto: create-drop
     show-sql: true
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
-        format_sql: true
-management:
-  endpoints:
-    web:
-      exposure:
-        include: mappings
-
-jwt:
-  privatekey: classpath:app.key
-  publickey: classpath:app.pub
