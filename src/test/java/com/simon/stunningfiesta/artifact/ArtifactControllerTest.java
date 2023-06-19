@@ -3,6 +3,7 @@ package com.simon.stunningfiesta.artifact;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.simon.stunningfiesta.artifact.converts.ArtifactToArtifactDtoConverter;
 import com.simon.stunningfiesta.system.StatusCode;
+import com.simon.stunningfiesta.system.exception.ObjectNotFoundException;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -86,7 +87,7 @@ class ArtifactControllerTest {
     @Test
     void findArtifactByIdNotFound() throws Exception {
         given(artifactService.findById(2))
-                .willThrow(new ArtifactNotFoundException(2));
+                .willThrow(new ObjectNotFoundException("artifact", 2));
 
         mockMvc.perform(get(BASE_PATH + "/2")
                         .accept(MediaType.APPLICATION_JSON))
@@ -185,7 +186,7 @@ class ArtifactControllerTest {
         String json = objectMapper.writeValueAsString(newArtifactDto);
 
         given(artifactService.update(anyInt(), any(Artifact.class)))
-                .willThrow(new ArtifactNotFoundException(123));
+                .willThrow(new ObjectNotFoundException("artifact", 123));
 
         mockMvc.perform(put(BASE_PATH + "/123")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -231,7 +232,7 @@ class ArtifactControllerTest {
 
     @Test
     void deleteArtifactFailWhenArtifactIdNotExist() throws Exception {
-        doThrow(new ArtifactNotFoundException(123))
+        doThrow(new ObjectNotFoundException("artifact", 123))
                 .when(artifactService).deleteById(123);
 
         mockMvc.perform(delete(BASE_PATH + "/123")

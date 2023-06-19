@@ -3,6 +3,7 @@ package com.simon.stunningfiesta.wizard;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.simon.stunningfiesta.artifact.Artifact;
 import com.simon.stunningfiesta.system.StatusCode;
+import com.simon.stunningfiesta.system.exception.ObjectNotFoundException;
 import com.simon.stunningfiesta.wizard.converters.WizardToWizardDtoConverter;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -110,7 +111,7 @@ class WizardControllerTest {
 
     @Test
     void findWizardByIdFailWhenWizardIdNotExist() throws Exception {
-        given(wizardService.findById(123)).willThrow(new WizardNotFound(123));
+        given(wizardService.findById(123)).willThrow(new ObjectNotFoundException("wizard", 123));
 
         mockMvc.perform(get("/api/v1/wizards/123")
                         .accept(MediaType.APPLICATION_JSON))
@@ -178,7 +179,7 @@ class WizardControllerTest {
         Wizard newWizard = new Wizard().withName("New Wizard");
 
         given(wizardService.update(anyInt(), any(Wizard.class)))
-                .willThrow(new WizardNotFound(123));
+                .willThrow(new ObjectNotFoundException("wizard", 123));
 
         WizardDto newWizardDto = wizardToWizardDtoConverter.convert(newWizard);
 
@@ -223,7 +224,7 @@ class WizardControllerTest {
 
     @Test
     void deleteWizardFailWhenWizardIdNotExist() throws Exception {
-        doThrow(new WizardNotFound(123))
+        doThrow(new ObjectNotFoundException("wizard", 123))
                 .when(wizardService).deleteById(123);
 
         mockMvc.perform(delete("/api/v1/wizards/123")

@@ -1,5 +1,6 @@
 package com.simon.stunningfiesta.artifact;
 
+import com.simon.stunningfiesta.system.exception.ObjectNotFoundException;
 import com.simon.stunningfiesta.wizard.Wizard;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -85,7 +86,7 @@ class ArtifactServiceTest {
         Throwable thrown = catchThrowable(() -> artifactService.findById(artifactId));
 
         assertThat(thrown)
-                .isInstanceOf(ArtifactNotFoundException.class)
+                .isInstanceOf(ObjectNotFoundException.class)
                 .hasMessage("Could not find artifact with Id 1 :(");
     }
 
@@ -150,7 +151,7 @@ class ArtifactServiceTest {
                 .withImageUrl("New image URL...");
 
         given(artifactRepository.findById(123))
-                .willThrow(new ArtifactNotFoundException(123));
+                .willThrow(new ObjectNotFoundException("artifact", 123));
 
         Throwable exception = catchThrowable(() -> artifactService.update(123, newArtifact));
 
@@ -177,7 +178,7 @@ class ArtifactServiceTest {
     void testDeleteFailWhenIdNotExist() {
         given(artifactRepository.findById(123)).willReturn(Optional.empty());
 
-        assertThrows(ArtifactNotFoundException.class,
+        assertThrows(ObjectNotFoundException.class,
                 () -> artifactService.deleteById(123));
 
         verify(artifactRepository, times(1)).findById(123);

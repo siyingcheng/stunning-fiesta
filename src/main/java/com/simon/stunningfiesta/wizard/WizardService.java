@@ -1,5 +1,6 @@
 package com.simon.stunningfiesta.wizard;
 
+import com.simon.stunningfiesta.system.exception.ObjectNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,7 +28,7 @@ public class WizardService {
 
     public Wizard findById(Integer id) {
         return wizardRepository.findById(id)
-                .orElseThrow(() -> new WizardNotFound(id));
+                .orElseThrow(() -> new ObjectNotFoundException("wizard", id));
     }
 
     public Wizard update(Integer id, Wizard newWizard) {
@@ -36,6 +37,6 @@ public class WizardService {
                     wizard.setName(newWizard.getName());
                     return wizardRepository.save(wizard);
                 })
-                .orElseThrow(() -> new WizardNotFound(id));
+                .orElseThrow(() -> new ObjectNotFoundException("wizard", id));
     }
 }
