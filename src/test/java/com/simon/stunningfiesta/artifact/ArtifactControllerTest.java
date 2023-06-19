@@ -9,6 +9,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -29,9 +30,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 class ArtifactControllerTest {
-    private static final String BASE_PATH = "/api/v1/artifacts";
-
-    private
 
     @Autowired
     MockMvc mockMvc;
@@ -46,6 +44,9 @@ class ArtifactControllerTest {
     ArtifactService artifactService;
 
     List<Artifact> artifacts;
+
+    @Value("${api.endpoint.base-url}/artifacts")
+    private String baseUrl;
 
     @BeforeEach
     void setUp() {
@@ -75,7 +76,7 @@ class ArtifactControllerTest {
     void findArtifactByIdSuccess() throws Exception {
         given(artifactService.findById(2)).willReturn(artifacts.get(0));
 
-        mockMvc.perform(get(BASE_PATH + "/2")
+        mockMvc.perform(get(this.baseUrl + "/2")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.flag").value(true))
                 .andExpect(jsonPath("$.code").value(StatusCode.SUCCESS))
@@ -89,7 +90,7 @@ class ArtifactControllerTest {
         given(artifactService.findById(2))
                 .willThrow(new ObjectNotFoundException("artifact", 2));
 
-        mockMvc.perform(get(BASE_PATH + "/2")
+        mockMvc.perform(get(this.baseUrl + "/2")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.flag").value(false))
                 .andExpect(jsonPath("$.code").value(StatusCode.NOT_FOUND))
@@ -101,7 +102,7 @@ class ArtifactControllerTest {
     void findAllArtifactsSuccess() throws Exception {
         given(artifactService.findAll()).willReturn(this.artifacts);
 
-        mockMvc.perform(get(BASE_PATH)
+        mockMvc.perform(get(this.baseUrl)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.flag").value(true))
                 .andExpect(jsonPath("$.code").value(StatusCode.SUCCESS))
@@ -122,7 +123,7 @@ class ArtifactControllerTest {
 
         given(artifactService.save(any(Artifact.class))).willReturn(artifact);
 
-        mockMvc.perform(post(BASE_PATH)
+        mockMvc.perform(post(this.baseUrl)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json)
                         .accept(MediaType.APPLICATION_JSON))
@@ -138,7 +139,7 @@ class ArtifactControllerTest {
         String json = objectMapper.writeValueAsString(
                 new ArtifactDto(null, "", "", "", null));
 
-        mockMvc.perform(post(BASE_PATH)
+        mockMvc.perform(post(this.baseUrl)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json)
                         .accept(MediaType.APPLICATION_JSON))
@@ -163,7 +164,7 @@ class ArtifactControllerTest {
 
         given(artifactService.update(anyInt(), any(Artifact.class))).willReturn(newArtifact);
 
-        mockMvc.perform(put(BASE_PATH + "/123")
+        mockMvc.perform(put(this.baseUrl + "/123")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json)
                         .accept(MediaType.APPLICATION_JSON))
@@ -188,7 +189,7 @@ class ArtifactControllerTest {
         given(artifactService.update(anyInt(), any(Artifact.class)))
                 .willThrow(new ObjectNotFoundException("artifact", 123));
 
-        mockMvc.perform(put(BASE_PATH + "/123")
+        mockMvc.perform(put(this.baseUrl + "/123")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json)
                         .accept(MediaType.APPLICATION_JSON))
@@ -208,7 +209,7 @@ class ArtifactControllerTest {
 
         String json = objectMapper.writeValueAsString(newArtifactDto);
 
-        mockMvc.perform(put(BASE_PATH + "/123")
+        mockMvc.perform(put(this.baseUrl + "/123")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json)
                         .accept(MediaType.APPLICATION_JSON))
@@ -222,7 +223,7 @@ class ArtifactControllerTest {
     void deleteArtifactSuccess() throws Exception {
         doNothing().when(artifactService).deleteById(123);
 
-        mockMvc.perform(delete(BASE_PATH + "/123")
+        mockMvc.perform(delete(this.baseUrl + "/123")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.flag").value(true))
                 .andExpect(jsonPath("$.code").value(StatusCode.SUCCESS))
@@ -235,7 +236,7 @@ class ArtifactControllerTest {
         doThrow(new ObjectNotFoundException("artifact", 123))
                 .when(artifactService).deleteById(123);
 
-        mockMvc.perform(delete(BASE_PATH + "/123")
+        mockMvc.perform(delete(this.baseUrl + "/123")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.flag").value(false))
                 .andExpect(jsonPath("$.code").value(StatusCode.NOT_FOUND))

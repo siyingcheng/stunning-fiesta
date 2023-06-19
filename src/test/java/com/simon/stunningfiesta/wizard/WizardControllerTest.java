@@ -9,6 +9,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -44,6 +45,9 @@ class WizardControllerTest {
     private Wizard albusDumledore;
     private Wizard harryPotter;
     private Wizard nevilleLongbottom;
+
+    @Value("${api.endpoint.base-url}/wizards")
+    private String baseUrl;
 
     @BeforeEach
     void setUp() {
@@ -85,7 +89,7 @@ class WizardControllerTest {
     void findAllWizardsSuccess() throws Exception {
         given(wizardService.findAll()).willReturn(wizards);
 
-        mockMvc.perform(get("/api/v1/wizards")
+        mockMvc.perform(get(this.baseUrl)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.flag").value(true))
                 .andExpect(jsonPath("$.code").value(StatusCode.SUCCESS))
@@ -99,7 +103,7 @@ class WizardControllerTest {
     void findWizardByIdSuccess() throws Exception {
         given(wizardService.findById(123)).willReturn(harryPotter);
 
-        mockMvc.perform(get("/api/v1/wizards/123")
+        mockMvc.perform(get(this.baseUrl + "/123")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.flag").value(true))
                 .andExpect(jsonPath("$.code").value(StatusCode.SUCCESS))
@@ -113,7 +117,7 @@ class WizardControllerTest {
     void findWizardByIdFailWhenWizardIdNotExist() throws Exception {
         given(wizardService.findById(123)).willThrow(new ObjectNotFoundException("wizard", 123));
 
-        mockMvc.perform(get("/api/v1/wizards/123")
+        mockMvc.perform(get(this.baseUrl + "/123")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.flag").value(false))
                 .andExpect(jsonPath("$.code").value(StatusCode.NOT_FOUND))
@@ -129,7 +133,7 @@ class WizardControllerTest {
 
         WizardDto newWizardDto = wizardToWizardDtoConverter.convert(newWizard);
 
-        mockMvc.perform(post("/api/v1/wizards")
+        mockMvc.perform(post(this.baseUrl)
                         .content(objectMapper.writeValueAsString(newWizardDto))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
@@ -145,7 +149,7 @@ class WizardControllerTest {
 
         WizardDto newWizardDto = wizardToWizardDtoConverter.convert(newWizard);
 
-        mockMvc.perform(post("/api/v1/wizards")
+        mockMvc.perform(post(this.baseUrl)
                         .content(objectMapper.writeValueAsString(newWizardDto))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
@@ -164,7 +168,7 @@ class WizardControllerTest {
 
         WizardDto newWizardDto = wizardToWizardDtoConverter.convert(newWizard);
 
-        mockMvc.perform(put("/api/v1/wizards/123")
+        mockMvc.perform(put(this.baseUrl + "/123")
                         .content(objectMapper.writeValueAsString(newWizardDto))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
@@ -183,7 +187,7 @@ class WizardControllerTest {
 
         WizardDto newWizardDto = wizardToWizardDtoConverter.convert(newWizard);
 
-        mockMvc.perform(put("/api/v1/wizards/123")
+        mockMvc.perform(put(this.baseUrl + "/123")
                         .content(objectMapper.writeValueAsString(newWizardDto))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
@@ -199,7 +203,7 @@ class WizardControllerTest {
 
         WizardDto newWizardDto = wizardToWizardDtoConverter.convert(newWizard);
 
-        mockMvc.perform(put("/api/v1/wizards/123")
+        mockMvc.perform(put(this.baseUrl + "/123")
                         .content(objectMapper.writeValueAsString(newWizardDto))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
@@ -214,7 +218,7 @@ class WizardControllerTest {
         Wizard newWizard = new Wizard().withName("New Wizard").withId(123);
         given(wizardService.findById(123)).willReturn(newWizard);
 
-        mockMvc.perform(delete("/api/v1/wizards/123")
+        mockMvc.perform(delete(this.baseUrl + "/123")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.flag").value(true))
                 .andExpect(jsonPath("$.code").value(StatusCode.SUCCESS))
@@ -227,7 +231,7 @@ class WizardControllerTest {
         doThrow(new ObjectNotFoundException("wizard", 123))
                 .when(wizardService).deleteById(123);
 
-        mockMvc.perform(delete("/api/v1/wizards/123")
+        mockMvc.perform(delete(this.baseUrl + "/123")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.flag").value(false))
                 .andExpect(jsonPath("$.code").value(StatusCode.NOT_FOUND))
