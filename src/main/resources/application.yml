@@ -4,3 +4,6 @@ spring:
     url: jdbc:h2:mem:stunning-fiesta
   jpa:
     show-sql: true
+api:
+  endpoint:
+    base-url: /api/v1
