@@ -1,5 +1,6 @@
 package com.simon.stunningfiesta.artifact;
 
+import com.simon.stunningfiesta.system.exception.ObjectNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +22,7 @@ public class ArtifactService {
 
     public Artifact findById(Integer artifactId) {
         return artifactRepository.findById(artifactId)
-                .orElseThrow(() -> new ArtifactNotFoundException(artifactId));
+                .orElseThrow(() -> new ObjectNotFoundException("artifact", artifactId));
     }
 
     public List<Artifact> findAll() {
@@ -40,6 +41,6 @@ public class ArtifactService {
                             .withImageUrl(newArtifact.getImageUrl());
                     return artifactRepository.save(artifact);
                 })
-                .orElseThrow(() -> new ArtifactNotFoundException(artifactId));
+                .orElseThrow(() -> new ObjectNotFoundException("artifact", artifactId));
     }
 }
