@@ -1,6 +1,8 @@
 package com.simon.stunningfiesta.wizard;
 
 import com.simon.stunningfiesta.artifact.Artifact;
+import com.simon.stunningfiesta.artifact.ArtifactRepository;
+import com.simon.stunningfiesta.system.exception.ObjectNotFoundException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,6 +24,9 @@ class WizardServiceTest {
 
     @Mock
     private WizardRepository wizardRepository;
+
+    @Mock
+    private ArtifactRepository artifactRepository;
 
     @InjectMocks
     private WizardService wizardService;
@@ -177,5 +182,62 @@ class WizardServiceTest {
 
         assertThat(exception.getMessage()).isEqualTo("Could not find wizard with Id 123 :(");
         verify(wizardRepository, times(0)).deleteById(123);
+    }
+
+    @Test
+    public void testAssignArtifactSuccess() {
+        Artifact invisibilityCloak = new Artifact()
+                .withId(1)
+                .withName("Invisibility Cloak")
+                .withDescription("An invisibility cloak is used to make the wearer invisible")
+                .withImageUrl("ImageUrl");
+
+        Wizard albusDumledore = new Wizard()
+                .withId(1)
+                .withName("Albus Dumledore")
+                .addArtifacts(invisibilityCloak);
+        Wizard harryPotter = new Wizard()
+                .withId(2)
+                .withName("Harry Potter");
+
+        given(artifactRepository.findById(1)).willReturn(Optional.of(invisibilityCloak));
+        given(wizardRepository.findById(2)).willReturn(Optional.of(harryPotter));
+        // when
+        wizardService.assignArtifact(2, 1);
+        // then
+        assertThat(invisibilityCloak.getOwner().getId()).isEqualTo(2);
+        assertThat(harryPotter.getArtifacts()).contains(invisibilityCloak);
+        assertThat(albusDumledore.getArtifacts()).doesNotContain(invisibilityCloak);
+    }
+
+    @Test
+    public void testAssignArtifactFailWhenWizardIdNotExist() {
+        Artifact invisibilityCloak = new Artifact()
+                .withId(1)
+                .withName("Invisibility Cloak")
+                .withDescription("An invisibility cloak is used to make the wearer invisible")
+                .withImageUrl("ImageUrl");
+
+        Wizard albusDumledore = new Wizard()
+                .withId(1)
+                .withName("Albus Dumledore")
+                .addArtifacts(invisibilityCloak);
+
+        given(artifactRepository.findById(1)).willReturn(Optional.of(invisibilityCloak));
+        given(wizardRepository.findById(2)).willReturn(Optional.empty());
+        // when
+        Throwable exception = catchThrowable(() -> wizardService.assignArtifact(2, 1));
+        // then
+        assertThat(invisibilityCloak.getOwner().getId()).isEqualTo(albusDumledore.getId());
+        assertThat(exception).hasMessage("Could not find wizard with Id 2 :(");
+    }
+
+    @Test
+    public void testAssignArtifactFailWhenArtifactIdNotExist() {
+        given(artifactRepository.findById(1)).willReturn(Optional.empty());
+        // when
+        Throwable exception = catchThrowable(() -> wizardService.assignArtifact(2, 1));
+        // then
+        assertThat(exception).hasMessage("Could not find artifact with Id 1 :(");
     }
 }
