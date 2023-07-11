@@ -3,7 +3,6 @@ package com.simon.stunningfiesta.artifact;
 import com.simon.stunningfiesta.artifact.converts.ArtifactDtoToArtifactConverter;
 import com.simon.stunningfiesta.artifact.converts.ArtifactToArtifactDtoConverter;
 import com.simon.stunningfiesta.system.Result;
-import com.simon.stunningfiesta.system.StatusCode;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,17 +28,13 @@ public class ArtifactController {
     @GetMapping("/{artifactId}")
     public Result findArtifactById(@PathVariable Integer artifactId) {
         Artifact foundArtifact = artifactService.findById(artifactId);
-        return Result.of(true)
-                .withCode(StatusCode.SUCCESS)
-                .withMessage("Find One Success")
+        return Result.success("Find One Success")
                 .withData(artifactToArtifactDtoConverter.convert(foundArtifact));
     }
 
     @GetMapping
     public Result findAllArtifacts() {
-        return Result.of(true)
-                .withCode(StatusCode.SUCCESS)
-                .withMessage("Find All Success")
+        return Result.success("Find All Success")
                 .withData(artifactService
                         .findAll()
                         .stream()
@@ -51,9 +46,7 @@ public class ArtifactController {
     public Result saveArtifact(@Valid @RequestBody ArtifactDto artifactDto) {
         Artifact savedArtifact = artifactService.save(artifactDtoToArtifactConverter.convert(artifactDto));
         ArtifactDto savedArtifactDto = artifactToArtifactDtoConverter.convert(savedArtifact);
-        return Result.of(true)
-                .withCode(StatusCode.SUCCESS)
-                .withMessage("Add Success")
+        return Result.success("Add Success")
                 .withData(savedArtifactDto);
     }
 
@@ -61,17 +54,13 @@ public class ArtifactController {
     public Result updateArtifactById(@PathVariable Integer artifactId,
                                      @Valid @RequestBody ArtifactDto artifactDto) {
         Artifact updatedArtifact = artifactService.update(artifactId, artifactDtoToArtifactConverter.convert(artifactDto));
-        return Result.of(true)
-                .withCode(StatusCode.SUCCESS)
-                .withMessage("Update Success")
+        return Result.success("Update Success")
                 .withData(artifactToArtifactDtoConverter.convert(updatedArtifact));
     }
 
     @DeleteMapping("/{artifactId}")
     public Result deleteArtifactById(@PathVariable Integer artifactId) {
         artifactService.deleteById(artifactId);
-        return Result.of(true)
-                .withCode(StatusCode.SUCCESS)
-                .withMessage("Delete Success");
+        return Result.success("Delete Success");
     }
 }

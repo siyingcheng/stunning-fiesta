@@ -143,7 +143,7 @@ class ArtifactServiceTest {
     }
 
     @Test
-    void testUpdateFailWhenArtifactIdNotExist() {
+    void testUpdateErrorWhenArtifactIdNotExist() {
         Artifact newArtifact = new Artifact()
                 .withId(123)
                 .withName("New Test Artifact")
@@ -175,7 +175,7 @@ class ArtifactServiceTest {
     }
 
     @Test
-    void testDeleteFailWhenIdNotExist() {
+    void testDeleteErrorWhenIdNotExist() {
         given(artifactRepository.findById(123)).willReturn(Optional.empty());
 
         assertThrows(ObjectNotFoundException.class,

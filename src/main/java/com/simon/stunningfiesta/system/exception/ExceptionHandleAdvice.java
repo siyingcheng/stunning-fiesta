@@ -20,9 +20,7 @@ public class ExceptionHandleAdvice {
     @ExceptionHandler(ObjectNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     Result handleObjectNotFoundException(ObjectNotFoundException ex) {
-        return Result.of(false)
-                .withCode(StatusCode.NOT_FOUND)
-                .withMessage(ex.getMessage());
+        return Result.fail(StatusCode.NOT_FOUND, ex.getMessage());
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -34,9 +32,7 @@ public class ExceptionHandleAdvice {
                 .collect(Collectors.toMap(
                         objectError -> ((FieldError) objectError).getField(),
                         ObjectError::getDefaultMessage));
-        return Result.of(false)
-                .withCode(StatusCode.INVALID_ARGUMENT)
-                .withMessage("Provided arguments are invalid, see data for details.")
+        return Result.fail(StatusCode.INVALID_ARGUMENT, "Provided arguments are invalid, see data for details.")
                 .withData(errorMap);
     }
 }
