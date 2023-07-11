@@ -9,8 +9,12 @@ public class Result {
     public Result() {
     }
 
-    public static Result of(boolean flag) {
-        return new Result().withFlag(flag);
+    public static Result success(String message) {
+        return new Result().withFlag(true).withCode(StatusCode.SUCCESS).withMessage(message);
+    }
+
+    public static Result fail(Integer code, String message) {
+        return new Result().withFlag(false).withCode(code).withMessage(message);
     }
 
     public void setFlag(boolean flag) {

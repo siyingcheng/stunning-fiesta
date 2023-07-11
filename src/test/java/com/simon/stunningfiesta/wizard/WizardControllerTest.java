@@ -115,7 +115,7 @@ class WizardControllerTest {
     }
 
     @Test
-    void findWizardByIdFailWhenWizardIdNotExist() throws Exception {
+    void findWizardByIdErrorWhenWizardIdNotExist() throws Exception {
         given(wizardService.findById(123)).willThrow(new ObjectNotFoundException("wizard", 123));
 
         mockMvc.perform(get(this.baseUrl + "/123")
@@ -145,7 +145,7 @@ class WizardControllerTest {
     }
 
     @Test
-    void addWizardFailWhenWizardDtoInvalid() throws Exception {
+    void addWizardErrorWhenWizardDtoInvalid() throws Exception {
         Wizard newWizard = new Wizard().withName("");
 
         WizardDto newWizardDto = wizardToWizardDtoConverter.convert(newWizard);
@@ -180,7 +180,7 @@ class WizardControllerTest {
     }
 
     @Test
-    void updateWizardFailWhenWizardIdNotExist() throws Exception {
+    void updateWizardErrorWhenWizardIdNotExist() throws Exception {
         Wizard newWizard = new Wizard().withName("New Wizard");
 
         given(wizardService.update(anyInt(), any(Wizard.class)))
@@ -199,7 +199,7 @@ class WizardControllerTest {
     }
 
     @Test
-    void updateWizardFailWhenWizardDtoInvalid() throws Exception {
+    void updateWizardErrorWhenWizardDtoInvalid() throws Exception {
         Wizard newWizard = new Wizard().withName("");
 
         WizardDto newWizardDto = wizardToWizardDtoConverter.convert(newWizard);
@@ -228,7 +228,7 @@ class WizardControllerTest {
     }
 
     @Test
-    void deleteWizardFailWhenWizardIdNotExist() throws Exception {
+    void deleteWizardErrorWhenWizardIdNotExist() throws Exception {
         doThrow(new ObjectNotFoundException("wizard", 123))
                 .when(wizardService).deleteById(123);
 
@@ -252,7 +252,7 @@ class WizardControllerTest {
     }
 
     @Test
-    void assignArtifactFailWhenWizardIdNotExist() throws Exception {
+    void assignArtifactErrorWhenWizardIdNotExist() throws Exception {
         doThrow(new ObjectNotFoundException("wizard", 2)).when(wizardService).assignArtifact(2, 1);
 
         mockMvc.perform(put(this.baseUrl + "/2/artifacts/1").accept(MediaType.APPLICATION_JSON))
@@ -263,7 +263,7 @@ class WizardControllerTest {
     }
 
     @Test
-    void assignArtifactFailWhenArtifactIdNotExist() throws Exception {
+    void assignArtifactErrorWhenArtifactIdNotExist() throws Exception {
         doThrow(new ObjectNotFoundException("artifact", 1)).when(wizardService).assignArtifact(2, 1);
 
         mockMvc.perform(put(this.baseUrl + "/2/artifacts/1").accept(MediaType.APPLICATION_JSON))

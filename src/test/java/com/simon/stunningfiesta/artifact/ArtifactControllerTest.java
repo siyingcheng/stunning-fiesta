@@ -135,7 +135,7 @@ class ArtifactControllerTest {
     }
 
     @Test
-    void saveArtifactFailWhenParametersInvalid() throws Exception {
+    void saveArtifactErrorWhenParametersInvalid() throws Exception {
         String json = objectMapper.writeValueAsString(
                 new ArtifactDto(null, "", "", "", null));
 
@@ -176,7 +176,7 @@ class ArtifactControllerTest {
     }
 
     @Test
-    void updateArtifactFailWhenArtifactIdInvalid() throws Exception {
+    void updateArtifactErrorWhenArtifactIdInvalid() throws Exception {
         Artifact newArtifact = new Artifact()
                 .withId(123)
                 .withName("New Test Artifact")
@@ -199,7 +199,7 @@ class ArtifactControllerTest {
     }
 
     @Test
-    void updateArtifactFailWhenArtifactDtoInvalid() throws Exception {
+    void updateArtifactErrorWhenArtifactDtoInvalid() throws Exception {
         Artifact newArtifact = new Artifact()
                 .withId(123)
                 .withName("")
@@ -232,7 +232,7 @@ class ArtifactControllerTest {
     }
 
     @Test
-    void deleteArtifactFailWhenArtifactIdNotExist() throws Exception {
+    void deleteArtifactErrorWhenArtifactIdNotExist() throws Exception {
         doThrow(new ObjectNotFoundException("artifact", 123))
                 .when(artifactService).deleteById(123);
 

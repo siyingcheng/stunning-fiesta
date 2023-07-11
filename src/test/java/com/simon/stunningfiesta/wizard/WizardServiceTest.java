@@ -98,7 +98,7 @@ class WizardServiceTest {
     }
 
     @Test
-    public void testFindByIdFailWhenIdNotExist() {
+    public void testFindByIdErrorWhenIdNotExist() {
         given(wizardRepository.findById(2)).willReturn(Optional.empty());
 
         Throwable exception = catchThrowable(() -> wizardService.findById(2));
@@ -150,7 +150,7 @@ class WizardServiceTest {
     }
 
     @Test
-    public void testUpdateFailWhenIdNotExist() {
+    public void testUpdateErrorWhenIdNotExist() {
         Wizard newWizard = new Wizard()
                 .withName("New wizard")
                 .withId(123);
@@ -175,7 +175,7 @@ class WizardServiceTest {
     }
 
     @Test
-    public void testDeleteFailWhenIdNotExist() {
+    public void testDeleteErrorWhenIdNotExist() {
         given(wizardRepository.findById(123)).willReturn(Optional.empty());
 
         Throwable exception = catchThrowable(() -> wizardService.deleteById(123));
@@ -211,7 +211,7 @@ class WizardServiceTest {
     }
 
     @Test
-    public void testAssignArtifactFailWhenWizardIdNotExist() {
+    public void testAssignArtifactErrorWhenWizardIdNotExist() {
         Artifact invisibilityCloak = new Artifact()
                 .withId(1)
                 .withName("Invisibility Cloak")
@@ -233,7 +233,7 @@ class WizardServiceTest {
     }
 
     @Test
-    public void testAssignArtifactFailWhenArtifactIdNotExist() {
+    public void testAssignArtifactErrorWhenArtifactIdNotExist() {
         given(artifactRepository.findById(1)).willReturn(Optional.empty());
         // when
         Throwable exception = catchThrowable(() -> wizardService.assignArtifact(2, 1));

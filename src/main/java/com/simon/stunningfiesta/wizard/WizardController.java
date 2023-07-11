@@ -1,7 +1,6 @@
 package com.simon.stunningfiesta.wizard;
 
 import com.simon.stunningfiesta.system.Result;
-import com.simon.stunningfiesta.system.StatusCode;
 import com.simon.stunningfiesta.wizard.converters.WizardDtoToWizardConverter;
 import com.simon.stunningfiesta.wizard.converters.WizardToWizardDtoConverter;
 import jakarta.validation.Valid;
@@ -33,18 +32,14 @@ public class WizardController {
                 .stream()
                 .map(wizardToWizardDtoConverter::convert)
                 .collect(Collectors.toList());
-        return Result.of(true)
-                .withCode(StatusCode.SUCCESS)
-                .withMessage("Find All Success")
+        return Result.success("Find All Success")
                 .withData(wizards);
     }
 
     @GetMapping("/{wizardId}")
     public Result findWizardById(@PathVariable Integer wizardId) {
         Wizard wizard = wizardService.findById(wizardId);
-        return Result.of(true)
-                .withCode(StatusCode.SUCCESS)
-                .withMessage("Find Wizard Success")
+        return Result.success("Find Wizard Success")
                 .withData(wizardToWizardDtoConverter.convert(wizard));
     }
 
@@ -52,9 +47,7 @@ public class WizardController {
     public Result addWizard(@Valid @RequestBody WizardDto wizardDto) {
         Wizard savedWizard = wizardService.save(wizardDtoToWizardConverter.convert(wizardDto));
         WizardDto savedWizardDto = wizardToWizardDtoConverter.convert(savedWizard);
-        return Result.of(true)
-                .withCode(StatusCode.SUCCESS)
-                .withMessage("Add Wizard Success")
+        return Result.success("Add Wizard Success")
                 .withData(savedWizardDto);
     }
 
@@ -63,25 +56,19 @@ public class WizardController {
                                    @Valid @RequestBody WizardDto wizardDto) {
         Wizard updatedWizard = wizardService.update(wizardId, wizardDtoToWizardConverter.convert(wizardDto));
         WizardDto updatedWizardDto = wizardToWizardDtoConverter.convert(updatedWizard);
-        return Result.of(true)
-                .withCode(StatusCode.SUCCESS)
-                .withMessage("Update Wizard Success")
+        return Result.success("Update Wizard Success")
                 .withData(updatedWizardDto);
     }
 
     @DeleteMapping("/{wizardId}")
     public Result deleteWizardById(@PathVariable Integer wizardId) {
         wizardService.deleteById(wizardId);
-        return Result.of(true)
-                .withCode(StatusCode.SUCCESS)
-                .withMessage("Delete Wizard Success");
+        return Result.success("Delete Wizard Success");
     }
 
     @PutMapping("/{wizardId}/artifacts/{artifactId}")
     public Result assignArtifact(@PathVariable Integer wizardId, @PathVariable Integer artifactId) {
         wizardService.assignArtifact(wizardId, artifactId);
-        return Result.of(true)
-                .withCode(StatusCode.SUCCESS)
-                .withMessage("Assign Artifact Success");
+        return Result.success("Assign Artifact Success");
     }
 }
