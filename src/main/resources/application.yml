@@ -7,3 +7,6 @@ spring:
 api:
   endpoint:
     base-url: /api/v1
+logging:
+  level:
+    com.simon.stunningfiesta.*: debug
