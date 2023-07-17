@@ -2,18 +2,25 @@ package com.simon.stunningfiesta.hogwartsuser;
 
 import com.simon.stunningfiesta.system.exception.ObjectNotFoundException;
 import jakarta.transaction.Transactional;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 @Transactional
-public class UserService {
+public class UserService implements UserDetailsService {
 
     private final UserRepository hogwartsUserRepository;
 
-    public UserService(UserRepository hogwartsUserRepository) {
+    private PasswordEncoder passwordEncoder;
+
+    public UserService(UserRepository hogwartsUserRepository, PasswordEncoder passwordEncoder) {
         this.hogwartsUserRepository = hogwartsUserRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public void deleteById(Integer id) {
@@ -21,20 +28,28 @@ public class UserService {
         hogwartsUserRepository.deleteById(id);
     }
 
-    List<HogwartsUser> findAll() {
+    public List<HogwartsUser> findAll() {
         return hogwartsUserRepository.findAll();
     }
 
-    HogwartsUser findById(Integer id) {
+    public HogwartsUser findById(Integer id) {
         return hogwartsUserRepository.findById(id)
                 .orElseThrow(() -> new ObjectNotFoundException("user", id));
     }
 
-    HogwartsUser save(HogwartsUser hogwartsUser) {
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return this.hogwartsUserRepository.findByUsername(username)
+                .map(MyUserPrincipal::new)
+                .orElseThrow(() -> new UsernameNotFoundException(String.format("username %s is not found.", username)));
+    }
+
+    public HogwartsUser save(HogwartsUser hogwartsUser) {
+        hogwartsUser.setPassword(passwordEncoder.encode(hogwartsUser.getPassword()));
         return hogwartsUserRepository.save(hogwartsUser);
     }
 
-    HogwartsUser update(Integer id, HogwartsUser hogwartsUser) {
+    public HogwartsUser update(Integer id, HogwartsUser hogwartsUser) {
         HogwartsUser userWillBeUpdate = findById(id);
         userWillBeUpdate.setUsername(hogwartsUser.getUsername())
                 .setEnabled(hogwartsUser.isEnabled())

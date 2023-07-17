@@ -2,6 +2,8 @@ package com.simon.stunningfiesta.system;
 
 import com.simon.stunningfiesta.artifact.Artifact;
 import com.simon.stunningfiesta.artifact.ArtifactRepository;
+import com.simon.stunningfiesta.hogwartsuser.HogwartsUser;
+import com.simon.stunningfiesta.hogwartsuser.UserService;
 import com.simon.stunningfiesta.wizard.Wizard;
 import com.simon.stunningfiesta.wizard.WizardRepository;
 import org.springframework.boot.CommandLineRunner;
@@ -14,9 +16,14 @@ public class DBInitializer implements CommandLineRunner {
 
     private final WizardRepository wizardRepository;
 
-    public DBInitializer(ArtifactRepository artifactRepository, WizardRepository wizardRepository) {
+    private final UserService userService;
+
+    public DBInitializer(ArtifactRepository artifactRepository,
+                         WizardRepository wizardRepository,
+                         UserService userService) {
         this.artifactRepository = artifactRepository;
         this.wizardRepository = wizardRepository;
+        this.userService = userService;
     }
 
     @Override
@@ -57,5 +64,25 @@ public class DBInitializer implements CommandLineRunner {
         wizardRepository.save(nevilleLongbottom);
 
         artifactRepository.save(light);
+
+        HogwartsUser manager = new HogwartsUser()
+                .setUsername("simon")
+                .setPassword("123456")
+                .setEnabled(true)
+                .setRoles("admin user");
+        HogwartsUser user1 = new HogwartsUser()
+                .setUsername("user1")
+                .setPassword("123456")
+                .setEnabled(true)
+                .setRoles("user");
+        HogwartsUser user2 = new HogwartsUser()
+                .setUsername("user2")
+                .setPassword("123456")
+                .setEnabled(false)
+                .setRoles("user");
+
+        userService.save(manager);
+        userService.save(user1);
+        userService.save(user2);
     }
 }
